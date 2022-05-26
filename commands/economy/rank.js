@@ -1,0 +1,55 @@
+module.exports = {
+  description: 'Affiche ton niveau ou celui d\'un utilisateur.',
+  type: 'CHAT_INPUT',
+  aliases: ['level'],
+  options: [
+    {
+      name: 'membre',
+      description: 'Choisissez un membre.',
+      type: 'USER'
+    }
+  ],
+  async run({ client, interaction }) {
+    const member = interaction.options.getMember('membre') || interaction.member;
+
+    if (!member) return interaction.error('Je ne trouve pas ce membre sur le serveur.');
+    if (member.user.bot) return interaction.error('Les bots n\'ont pas de credits.');
+
+    const usersDB = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id}`);
+    const userDB = usersDB.rows[0];
+
+    if (!userDB) {
+      (member.id == interaction.member.id)
+        ? interaction.error('Vous n\'avez pas de niveau.')
+        : interaction.error(`${member.toString()} n'a pas de niveau.`);
+      return;
+    }
+
+    const ranks = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${member.id};`);
+    const rank = ranks.rows[0];
+
+    const oldXpObjectif = (userDB.level == 1 ? 1 : userDB.level - 1) ** 2 * 100;
+    const currentXpObjectif = userDB.level ** 2 * 100;
+    const xpObjectif = currentXpObjectif - oldXpObjectif;
+
+    const userXp = userDB.experience - oldXpObjectif;
+
+    const percentage = userXp * 100 / xpObjectif;
+
+    interaction.reply({
+      embeds: [{
+        color: client.config.colors.main,
+        author: {
+          name: member.user.tag,
+          icon_url: member.user.displayAvatarURL()
+        },
+        title: 'Rank',
+        description: `Rank : ${rank.position}\nNiveau : ${userDB.level}\nExperience : ${userXp} / ${xpObjectif}\n\n${client.config.emojis.xpbar_left}${client.config.emojis.xpbar_full.repeat(Math.floor(percentage / 7))}${client.config.emojis.xpbar_empty.repeat(Math.floor((100 - percentage) / 7))}${client.config.emojis.xpbar_right}`,
+        footer: {
+          icon_url: client.user.displayAvatarURL(),
+          text: client.config.footer
+        }
+      }]
+    });
+  }
+};
