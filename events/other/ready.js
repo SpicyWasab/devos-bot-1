@@ -1,7 +1,7 @@
 require('dotenv/config');
 
 module.exports = async (client) => {
-  const guild = client.guilds.cache.get('759432409400999967');
+  const guild = client.guilds.cache.get(process.env.GUILD_ID);
 
   guild.members.fetch();
 

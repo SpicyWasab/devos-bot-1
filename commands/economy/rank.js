@@ -1,3 +1,5 @@
+const { Rank } = require("canvafy");
+
 module.exports = {
   description: 'Affiche ton niveau ou celui d\'un utilisateur.',
   type: 'CHAT_INPUT',
@@ -15,40 +17,40 @@ module.exports = {
     if (!member) return interaction.error('Je ne trouve pas ce membre sur le serveur.');
     if (member.user.bot) return interaction.error('Les bots n\'ont pas de credits.');
 
-    const usersDB = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id}`);
-    const userDB = usersDB.rows[0];
+    await interaction.deferReply();
 
-    if (!userDB) {
-      (member.id == interaction.member.id)
-        ? interaction.error('Vous n\'avez pas de niveau.')
-        : interaction.error(`${member.toString()} n'a pas de niveau.`);
-      return;
-    }
+    const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id}`);
+    const user_db = users_db_select.rows[0];
 
-    const ranks = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${member.id};`);
-    const rank = ranks.rows[0];
+    if (!user_db) return interaction.error(member.id == interaction.member.id ? 'Vous n\'avez pas de niveau.' : `${member} n'a pas de niveau.`);
 
-    const oldXpObjectif = (userDB.level == 1 ? 1 : userDB.level - 1) ** 2 * 100;
-    const currentXpObjectif = userDB.level ** 2 * 100;
-    const xpObjectif = currentXpObjectif - oldXpObjectif;
+    const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${member.id};`);
+    const rank = parseInt(ranks_select.rows[0].position);
 
-    const userXp = userDB.experience - oldXpObjectif;
+    const old_xp_objectif = (user_db.level === 1 ? 1 : user_db.level - 1) ** 2 * 100;
+    const current_xp_objectif = user_db.level ** 2 * 100;
+    const xp_objectif = current_xp_objectif - old_xp_objectif;
 
-    const percentage = userXp * 100 / xpObjectif;
+    const user_xp = user_db.experience - old_xp_objectif;
+  
+    const rank_card = await new Rank()
+      .setAvatar(member.user.displayAvatarURL({ format: "png" }))
+      .setBackground("image", "https://i.imgur.com/8fOLTXQ.png")
+      .setBarColor("#ff5044")
+      .setUsername(member.user.username)
+      .setDiscriminator(member.user.discriminator)
+      .setLevel(user_db.level)
+      .setForegroundOpacity(0.8)
+      .setRank(rank)
+      .setCurrentXp(user_xp)
+      .setRequiredXp(xp_objectif)
+      .build();
 
-    interaction.reply({
-      embeds: [{
-        color: client.config.colors.main,
-        author: {
-          name: member.user.tag,
-          icon_url: member.user.displayAvatarURL()
-        },
-        title: 'Rank',
-        description: `Rank : ${rank.position}\nNiveau : ${userDB.level}\nExperience : ${userXp} / ${xpObjectif}\n\n${client.config.emojis.xpbar_left}${client.config.emojis.xpbar_full.repeat(Math.floor(percentage / 7))}${client.config.emojis.xpbar_empty.repeat(Math.floor((100 - percentage) / 7))}${client.config.emojis.xpbar_right}`,
-        footer: {
-          icon_url: client.user.displayAvatarURL(),
-          text: client.config.footer
-        }
+    await interaction.editReply({
+      content: `Voici la rank card de ${member}`,
+      files: [{
+        attachment: rank_card.toBuffer(),
+        name: `rank-${member.id}.png`
       }]
     });
   }

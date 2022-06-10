@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/squarfiuz/devos-bot#readme",
   "dependencies": {
+    "canvafy": "^1.3.3",
     "canvas": "^2.9.1",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",

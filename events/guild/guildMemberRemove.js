@@ -3,9 +3,9 @@ module.exports = async (client, member) => {
 
   const { guild } = member;
 
-  const all_members_channel = guild.channels.cache.get(client.config.stats.all);
-  const members_channel = guild.channels.cache.get(client.config.stats.members);
-  const bots_channel = guild.channels.cache.get(client.config.stats.bots);
+  const all_members_channel = await guild.channels.fetch(client.config.stats.all);
+  const members_channel = await guild.channels.fetch(client.config.stats.members);
+  const bots_channel = await guild.channels.fetch(client.config.stats.bots);
 
   await guild.members.fetch();
 

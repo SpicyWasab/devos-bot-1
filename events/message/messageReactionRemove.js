@@ -1,15 +1,13 @@
 module.exports = async (client, messageReaction, user) => {
-  const emojis = client.config.reactions[messageReaction.message.id]
+  const group = client.config.reactions.find(r => r.message_id === messageReaction.message.id);
 
-  if (!emojis) return;
+  if (!group) return;
 
-  console.log(messageReaction.emoji);
-  
-  const emoji = emojis[messageReaction.emoji.id ? messageReaction.emoji.id : messageReaction.emoji.name];
+  const emoji = group.roles.find(r => r.emoji_id === (messageReaction.emoji.id ? messageReaction.emoji.id : messageReaction.emoji.name));
 
   if (!emoji || !emoji.role_id) return;
 
-  const member = messageReaction.message.guild.members.cache.get(user.id);
+  const member = await messageReaction.message.guild.members.fetch(user.id);
 
   member.roles.remove(emoji.role_id);
 }

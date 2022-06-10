@@ -1,5 +1,5 @@
 const Client = require('./base/Client');
-const config = require('./config.json');
+const config = require('./config.test.json');
 require('./base/Prototypes');
 require('dotenv/config');
 

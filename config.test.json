@@ -1,7 +1,7 @@
 {
-  "ad_role": "947985140003528705",
-  "autorole_roles": [""],
-  "booster_role": "774657788223029280",
+  "ad_role": "",
+  "autorole_roles": [],
+  "booster_role": "",
   "disboard_id": "302050872383242240",
   "colors": {
     "blue": "#3e70dd",
@@ -9,6 +9,44 @@
     "main": "#fa7d5f",
     "red": "#ed4245"
   },
+  "color_roles": [
+    {
+      "emoji": "🟣",
+      "name": "Violet",
+      "id": "purple",
+      "role_id": "984861959772065922"
+    },
+    {
+      "emoji": "🔵",
+      "name": "Bleu",
+      "id": "blue",
+      "role_id": "984861981062361139"
+    },
+    {
+      "emoji": "🟢",
+      "name": "Vert",
+      "id": "green",
+      "role_id": "984861993108389938"
+    },
+    {
+      "emoji": "🟡",
+      "name": "Jaune",
+      "id": "yellow",
+      "role_id": "984862025966575637"
+    },
+    {
+      "emoji": "🟠",
+      "name": "Orange",
+      "id": "orange",
+      "role_id": "984862048771010570"
+    },
+    {
+      "emoji": "🔴",
+      "name": "Rouge",
+      "id": "red",
+      "role_id": "984862069419573258"
+    }
+  ],
   "emojis": {
     "administration": "<:administration:947422837742895164>",
     "economy": "<:economy:947422888896630794>",
@@ -25,22 +63,24 @@
     "type": "online",
     "status": "/help | Bot of Devos Code"
   },
-  "reactions": {
-    "channel_id": "946873058747093023",
-    "962689701163192400": {
-      "message_id": "962689701163192400",
-      "947422837742895164": {
-        "name": "King",
-        "emoji_id": "947422837742895164",
-        "role_id": "962693689505886220"
-      },
-      "🤝": {
-        "name": "Partenariats",
-        "emoji_id": "🤝",
-        "role_id": "962693689505886220"
-      }
+  "reactions": [
+    {
+      "message_id": "984833274956349500",
+      "name": "test",
+      "roles": [
+        {
+          "name": "King",
+          "emoji_id": "947422837742895164",
+          "role_id": "962693689505886220"
+        },
+        {
+          "name": "Partenariats",
+          "emoji_id": "🤝",
+          "role_id": "962693689505886220"
+        }
+      ]
     }
-  },
+  ],
   "staff_roles" : ["777210157305954374", "759432774142394379"],
   "stats": {
     "all": "958740328528089148",
@@ -48,7 +88,18 @@
     "bots": "958740383028895744"
   },
   "store": [
-    { "credits": 10, "item": "ad_role", "description": "Permet de faire la pub que vous voulez dans le salon <#947985768142503987> toutes les 6 heures." }
+    {
+      "credits": 30,
+      "name": "Rôle pub",
+      "id": "ad_role",
+      "description": "Permet de faire la pub que vous voulez dans le salon <#947985768142503987> toutes les 6 heures."
+    },
+    {
+      "credits": 15,
+      "name": "Rôles de couleur",
+      "id": "color_roles",
+      "description": "Permet de changer votre couleur qui apparait sur le serveur."
+    }
   ],
   "suggestion_channel" : "815539492752588851",
   "ticket_category_id": "961316584398422026",

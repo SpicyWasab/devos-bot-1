@@ -20,13 +20,9 @@ module.exports = {
 
     const options = [];
 
-    const itemsName = {
-      ad_role: 'Rôle de pub.'
-    };
-
     client.config.store.forEach(item => {
-      options.push({ label: itemsName[item.item], value: item.item, description: `Prix : ${item.credits} credits, ID : ${item.item}` });
-      embed.fields.push({ name: itemsName[item.item], value: `${item.description}` });
+      options.push({ label: item.name, value: item.id, description: `Prix : ${item.credits} credits, ID : ${item.id}` });
+      embed.fields.push({ name: item.name, value: item.description });
     });
 
     interaction.reply({

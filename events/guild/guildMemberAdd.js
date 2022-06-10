@@ -4,7 +4,7 @@ module.exports = async (client, member) => {
 
   const { guild } = member;
 
-  const welcome_channel = guild.channels.cache.get(client.config.welcome_channel_id);
+  const welcome_channel = await guild.channels.fetch(client.config.welcome_channel_id);
 
   welcome_channel.send({
     files: [
@@ -12,9 +12,9 @@ module.exports = async (client, member) => {
     ]
   });
 
-  const all_members_channel = guild.channels.cache.get(client.config.stats.all);
-  const members_channel = guild.channels.cache.get(client.config.stats.members);
-  const bots_channel = guild.channels.cache.get(client.config.stats.bots);
+  const all_members_channel = await guild.channelsfetch(client.config.stats.all);
+  const members_channel = await guild.channelsfetch(client.config.stats.members);
+  const bots_channel = await guild.channelsfetch(client.config.stats.bots);
 
   await guild.members.fetch();
 
