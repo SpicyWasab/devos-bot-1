@@ -1,31 +1,28 @@
 module.exports = {
-  description: 'Ajoute les réactions de rôles au message en question.',
-  type: 'CHAT_INPUT',
-  permissions: ['ADMINISTRATOR'],
+  description: "Ajoute les réactions de rôles au message en question.",
+  type: "CHAT_INPUT",
+  permissions: ["ADMINISTRATOR"],
   options: [
     {
-      name: 'message',
-      description: 'Choisissez le message.',
-      type: 'STRING',
+      name: "message",
+      description: "Choisissez le message.",
+      type: "STRING",
       required: true
     }
   ],
   async run({ client, interaction }) {
-    const category = interaction.options.getString('category');
+    const category = interaction.options.getString("category");
 
-    const emojis = client.config.reactions[category]
+    const group = client.config.reactions.find(r => r.name.toLowerCase() === category.toLowerCase);
 
-    if (!emojis || typeof emojis !== 'object') return interaction.success('Ce message n\'est pas dans la liste des messages à réaction.', { ephemeral: true });
+    if (!group) return interaction.error("Ce message n'est pas dans la liste des messages à réaction.", { ephemeral: true });
 
-    const channel = interaction.guild.channels.cache.get(client.config.reactions.channel_id);
-    const message = await channel.messages.fetch(emojis.message_id);
+    const message = await interaction.channel.messages.fetch(group.message_id);
 
-    for (const emoji of Object.values(emojis)) {
-      if (typeof emoji === 'object') {
-        message.react(emoji.emoji_id);
-      }
+    for (const emoji of group.roles) {
+      message.react(emoji.emoji_id);
     }
 
-    interaction.success('J\'ai bien ajouté les réactions.', { ephemeral: true });
+    interaction.success("J'ai bien ajouté les réactions.", { ephemeral: true });
   }
 };

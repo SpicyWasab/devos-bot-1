@@ -1,14 +1,26 @@
+const canvafy = require("canvafy");
+
 module.exports = async (client, member) => {
-  member.roles.add(client.config.autorole_roles, 'Ajout des autoroles.');
+  member.roles.add(client.config.autorole_roles, "Ajout des autoroles.");
   await client.pool.query(`INSERT INTO users(id, credits, experience, level) VALUES (${member.id}, 0, 0, 1)`).catch(e => null);
 
   const { guild } = member;
 
   const welcome_channel = await guild.channels.fetch(client.config.welcome_channel_id);
 
+  const welcome_card = await new canvafy.WelcomeLeave()
+  .setAvatar(member.user.displayAvatarURL({ format: "png" }))
+  .setBackground("image", "https://i.imgur.com/8fOLTXQ.png")
+  .setTitle("Bienvenue")
+  .setDescription("Devos Code, serveur communautaire d'aide et d'apprentissage en programmation !")
+  .setBorder(client.config.colors.main)
+  .setAvatarBorder(client.config.colors.main)
+  .setOverlayOpacity(0.3)
+  .build();
+
   welcome_channel.send({
     files: [
-      { attachment: await client.welcome_card(member), name: `welcome-${member.id}.png` }
+      { attachment: welcome_card.toBuffer(), name: `welcome-${member.id}.png` }
     ]
   });
 

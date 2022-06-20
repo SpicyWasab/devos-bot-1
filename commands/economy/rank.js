@@ -22,9 +22,9 @@ module.exports = {
     const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id}`);
     const user_db = users_db_select.rows[0];
 
-    if (!user_db) return interaction.error(member.id == interaction.member.id ? 'Vous n\'avez pas de niveau.' : `${member} n'a pas de niveau.`);
+    if (!user_db) return interaction.error(member.id == interaction.member.id ? 'Vous n\'avez pas de niveau.' : `${member.toString()} n'a pas de niveau.`);
 
-    const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${member.id};`);
+    const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM users) SELECT * from ranking WHERE id = ${member.id};`);
     const rank = parseInt(ranks_select.rows[0].position);
 
     const old_xp_objectif = (user_db.level === 1 ? 1 : user_db.level - 1) ** 2 * 100;
@@ -34,20 +34,20 @@ module.exports = {
     const user_xp = user_db.experience - old_xp_objectif;
   
     const rank_card = await new Rank()
-      .setAvatar(member.user.displayAvatarURL({ format: "png" }))
-      .setBackground("image", "https://i.imgur.com/8fOLTXQ.png")
-      .setBarColor("#ff5044")
-      .setUsername(member.user.username)
-      .setDiscriminator(member.user.discriminator)
-      .setLevel(user_db.level)
-      .setForegroundOpacity(0.8)
-      .setRank(rank)
-      .setCurrentXp(user_xp)
-      .setRequiredXp(xp_objectif)
-      .build();
+    .setAvatar(member.user.displayAvatarURL({ format: "png" }))
+    .setBackground("image", "https://i.imgur.com/8fOLTXQ.png")
+    .setBarColor("#ff5044")
+    .setUsername(member.user.username)
+    .setDiscriminator(member.user.discriminator)
+    .setLevel(user_db.level)
+    .setForegroundOpacity(0.8)
+    .setRank(rank)
+    .setCurrentXp(user_xp)
+    .setRequiredXp(xp_objectif)
+    .build();
 
     await interaction.editReply({
-      content: `Voici la rank card de ${member}`,
+      content: `Voici la rank card de ${member.toString()}`,
       files: [{
         attachment: rank_card.toBuffer(),
         name: `rank-${member.id}.png`

@@ -1,26 +1,27 @@
 module.exports = {
-  description: 'Affiche différents classements.',
-  type: 'CHAT_INPUT',
+  description: "Affiche différents classements.",
+  type: "CHAT_INPUT",
   options: [
     {
-      name: 'level',
-      description: 'Affiche le classement des niveaux.',
-      type: 'SUB_COMMAND'
+      name: "level",
+      description: "Affiche le classement des niveaux.",
+      type: "SUB_COMMAND"
     },
     {
-      name: 'credits',
-      description: 'Affiche le classement des credits.',
-      type: 'SUB_COMMAND'
+      name: "credits",
+      description: "Affiche le classement des credits.",
+      type: "SUB_COMMAND"
     }
   ],
   async run({ client, interaction }) {
     const leadeboard_type = interaction.options.getSubcommand();
 
-    if (leadeboard_type == 'level') {
-      const usersDB = await client.pool.query('SELECT * FROM users ORDER BY experience DESC LIMIT 10');
+    if (leadeboard_type === "level") {
+      const users_db_select = await client.pool.query("SELECT * FROM users ORDER BY experience DESC LIMIT 10");
 
-      const ranks = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${interaction.member.id};`);
-      const rank = ranks.rows[0];
+      const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${interaction.member.id};`);
+      if (!ranks_select.rowCount) return interaction.error("Personne n'a encore de niveau sur le serveur.");
+      const rank = ranks_select.rows[0];
 
       const embed = {
         color: client.config.colors.main,
@@ -28,50 +29,50 @@ module.exports = {
           name: interaction.guild.name,
           icon_url: interaction.guild.iconURL()
         },
-        title: 'Level Leadeboard',
-        description: '',
+        title: "Level Leadeboard",
+        description: "",
         footer: {
           icon_url: client.user.displayAvatarURL(),
           text: client.config.footer
         }
       };
 
-      usersDB.rows.map((userDB, i) => {
-        const member = interaction.guild.members.cache.get(userDB.id);
-        if (!member) return;
-        embed.description += `${i + 1}. ${member.toString()}\nNiveau : ${userDB.level}, Experience : ${userDB.experience}\n`;
+      await users_db_select.rows.forEach(async (userDB, i) => {
+        const member = await interaction.guild.members.fetch(userDB.id);
+        if (member) embed.description += `${i + 1}. ${member.toString()}\nNiveau : ${userDB.level}, Experience : ${userDB.experience}\n`;
       });
 
-      if (rank.position > usersDB.rows.length) {
-        const personnalUsersDB = await client.pool.query(`SELECT * FROM users WHERE id = ${interaction.member.id}`);
-        const personnalUserDB = personnalUsersDB.rows[0];
-        embed.description += `\n↪ ${rank.position}. ${interaction.member.toString()}\nNiveau : ${personnalUserDB.level}, Experience : ${personnalUserDB.experience}`;
+      if (rank.position > users_db_select.rowCount) {
+        const user_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${interaction.member.id}`);
+        const user_db = user_db_select.rows[0];
+        embed.description += `\n↪ ${rank.position}. ${interaction.member.toString()}\nNiveau : ${user_db.level}, Experience : ${user_db.experience}`;
       }
 
       interaction.reply({ embeds: [embed] });
-    } else if (leadeboard_type == 'credits') {
-      const usersDB = await client.pool.query('SELECT * FROM users ORDER BY credits DESC LIMIT 10');
+    } else if (leadeboard_type === "credits") {
+      const users_db_select = await client.pool.query("SELECT * FROM users ORDER BY credits DESC LIMIT 10");
 
-      const ranks = await client.pool.query(`WITH ranking AS (SELECT id, credits, DENSE_RANK() OVER (ORDER BY credits DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${interaction.member.id};`);
-      const rank = ranks.rows[0];
+      const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, credits, DENSE_RANK() OVER (ORDER BY credits DESC) AS position FROM users) SELECT * from ranking WHERE id = ${interaction.member.id};`);
+      if (!ranks_select.rowCount) return interaction.error("Personne n'a encore de credits sur le serveur.");
+      const rank = ranks_select.rows[0];
 
       const embed = {
         color: client.config.colors.main,
         author: { name: interaction.guild.name, icon_url: interaction.guild.iconURL() },
-        title: 'Credits Leadeboard',
-        description: '',
+        title: "Credits Leadeboard",
+        description: "",
         footer: { icon_url: client.user.displayAvatarURL(), text: client.config.footer }
       };
 
-      usersDB.rows.map((userDB, i) => {
-        const member = interaction.guild.members.cache.get(userDB.id);
-        embed.description += `${i + 1}. ${member.toString()}\nCredits : ${userDB.credits}\n`;
+      await users_db_select.rows.forEach(async (user_db, i) => {
+        const member = await interaction.guild.members.fetch(user_db.id);
+        if (member) embed.description += `${i + 1}. ${member.toString()}\nCredits : ${user_db.credits}\n`;
       });
 
-      if (rank.position > usersDB.rows.length) {
-        const personnalUsersDB = await client.pool.query(`SELECT * FROM users WHERE id = ${interaction.member.id}`);
-        const personnalUserDB = personnalUsersDB.rows[0];
-        embed.description += `\n↪ ${rank.position}. ${interaction.member.toString()}\nCredits : ${personnalUserDB.credits}`;
+      if (rank.position > users_db_select.rowCount) {
+        const user_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${interaction.member.id}`);
+        const user_db = user_db_select.rows[0];
+        embed.description += `\n↪ ${rank.position}. ${interaction.member.toString()}\nCredits : ${user_db.credits}`;
       }
 
       interaction.reply({ embeds: [embed] });

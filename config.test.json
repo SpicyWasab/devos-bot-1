@@ -1,6 +1,7 @@
 {
   "ad_role": "",
   "autorole_roles": [],
+  "ban_event_roles": ["946876887618183198", "946876910980435980"],
   "booster_role": "",
   "disboard_id": "302050872383242240",
   "colors": {
@@ -52,11 +53,7 @@
     "economy": "<:economy:947422888896630794>",
     "error": ":x:",
     "success": ":white_check_mark:",
-    "utility": "<:utility:947422908920254465>",
-    "xpbar_empty": "<:xpbar_empty:947467673439195186>",
-    "xpbar_full": "<:xpbar_full:947467716766335016>",
-    "xpbar_left": "<:xpbar_left:947467373655511050>",
-    "xpbar_right": "<:xpbar_right:947467751025430571>"
+    "utility": "<:utility:947422908920254465>"
   },
   "footer": "Devos Bot - Official Bot of Devos Code",
   "presence": {
