@@ -24,9 +24,9 @@ module.exports = async (client, member) => {
     ]
   });
 
-  const all_members_channel = await guild.channelsfetch(client.config.stats.all);
-  const members_channel = await guild.channelsfetch(client.config.stats.members);
-  const bots_channel = await guild.channelsfetch(client.config.stats.bots);
+  const all_members_channel = await guild.channels.fetch(client.config.stats.all);
+  const members_channel = await guild.channels.fetch(client.config.stats.members);
+  const bots_channel = await guild.channels.fetch(client.config.stats.bots);
 
   await guild.members.fetch();
 

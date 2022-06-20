@@ -20,15 +20,15 @@ module.exports = {
           fields: [
             {
               name: `${client.config.emojis.administration} Administration`,
-              value: Object.values(client.commands).filter(c => c.category == 'administration').map(cmd => `\`${cmd.name}\``).join(', ')
+              value: Object.values(client.commands).filter(c => c.category == 'administration').map(command => `\`${command.name}\``).join(', ')
             },
             {
               name: `${client.config.emojis.economy} Economie`, 
-              value: Object.values(client.commands).filter(c => c.category == 'economy').map(cmd => `\`${cmd.name}\``).join(', ')
+              value: Object.values(client.commands).filter(c => c.category == 'economy').map(command => `\`${command.name}\``).join(', ')
             },
             { 
               name: `${client.config.emojis.utility} Utilitaire`,
-              value: Object.values(client.commands).filter(c => c.category == 'utility').map(cmd => `\`${cmd.name}\``).join(', ')
+              value: Object.values(client.commands).filter(c => c.category == 'utility').map(command => `\`${command.name}\``).join(', ')
             }
           ],
           footer: {

@@ -20,10 +20,10 @@ module.exports = {
 
     const options = [];
 
-    client.config.store.forEach(item => {
+    for (const item of client.config.store) {
       options.push({ label: item.name, value: item.id, description: `Prix : ${item.credits} credits, ID : ${item.id}` });
       embed.fields.push({ name: item.name, value: item.description });
-    });
+    }
 
     interaction.reply({
       components: [

@@ -51,11 +51,22 @@
   "emojis": {
     "administration": "<:administration:947422837742895164>",
     "economy": "<:economy:947422888896630794>",
-    "error": ":x:",
-    "success": ":white_check_mark:",
+    "error": "❌",
+    "success": "✅",
     "utility": "<:utility:947422908920254465>"
   },
   "footer": "Devos Bot - Official Bot of Devos Code",
+  "missions_channels": [
+    {
+      "channel_id": "988480548974522428",
+      "message_id": "988480569396592691"
+    },
+    {
+      "channel_id": "988480557874806815",
+      "message_id": "988480574253568050"
+    }
+  ],
+  "missions_logs_channel_id": "948174763216470026",
   "presence": {
     "type": "online",
     "status": "/help | Bot of Devos Code"
@@ -78,7 +89,7 @@
       ]
     }
   ],
-  "staff_roles" : ["777210157305954374", "759432774142394379"],
+  "staff_roles_ids" : ["946876887618183198"],
   "stats": {
     "all": "958740328528089148",
     "members": "958740354855751680",
