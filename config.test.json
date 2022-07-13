@@ -56,6 +56,7 @@
     "utility": "<:utility:947422908920254465>"
   },
   "footer": "Devos Bot - Official Bot of Devos Code",
+  "general_channel_id": "946838404199505983",
   "missions_channels": [
     {
       "channel_id": "988480548974522428",
@@ -67,6 +68,7 @@
     }
   ],
   "missions_logs_channel_id": "948174763216470026",
+  "owner_id": "945318973807935558",
   "presence": {
     "type": "online",
     "status": "/help | Bot of Devos Code"
@@ -89,6 +91,7 @@
       ]
     }
   ],
+  "roles_channel_id": "946838404199505983",
   "staff_roles_ids" : ["946876887618183198"],
   "stats": {
     "all": "958740328528089148",

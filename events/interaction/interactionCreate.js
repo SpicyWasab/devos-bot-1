@@ -3,6 +3,9 @@ module.exports = (client, interaction) => {
     const command = client.commands[interaction.commandName] || Object.values(client.commands).find(c => c.aliases?.includes(interaction.commandName));
 
     if (!command) return interaction.error('Cette commande n\'existe pas ou n\'existe plus.');
+
+    if (interaction.user.id !== client.config.owner_id && command.category === "owner") return;
+
     if (command.permissions) {
       if (!interaction.member.permissions.has(command.permissions)) return interaction.error('Vous n\'avez pas la permission de faire cette commande.', { ephemeral: true });
     }

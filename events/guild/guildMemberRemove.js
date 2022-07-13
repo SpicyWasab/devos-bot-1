@@ -3,14 +3,14 @@ module.exports = async (client, member) => {
 
   const { guild } = member;
 
-  const all_members_channel = await guild.channels.fetch(client.config.stats.all);
-  const members_channel = await guild.channels.fetch(client.config.stats.members);
-  const bots_channel = await guild.channels.fetch(client.config.stats.bots);
+  const all_members_channel = guild.channels.cache.get(client.config.stats.all) || await guild.channels.fetch(client.config.stats.all).catch(() => null);
+  const members_channel = guild.channels.cache.get(client.config.stats.members) || await guild.channels.fetch(client.config.stats.members).catch(() => null);
+  const bots_channel = guild.channels.cache.get(client.config.stats.bots) || await guild.channels.fetch(client.config.stats.bots).catch(() => null);
 
   await guild.members.fetch();
 
   const all_members = guild.memberCount;
-  const members = guild.members.cache.filter(m => !m.user.bot).size;
+  const members = guild.members.cache.filter(m => m.user.bot === false).size;
   const bots = all_members - members;
 
   all_members_channel.setName(`🌍 Global: ${all_members}`, 'Stats counter.');

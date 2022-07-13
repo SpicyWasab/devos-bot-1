@@ -31,7 +31,7 @@ module.exports = async (client, message) => {
           ]
         });
 
-        const mission_logs_channels = await message.guild.channels.fetch(client.config.missions_logs_channel_id);
+        const mission_logs_channels = message.guild.channels.cache.get(client.config.missions_logs_channel_id) || await message.guild.channels.fetch(client.config.missions_logs_channel_id).catch(() => null);
         mission_logs_channels.send({
           embeds: [
             {
