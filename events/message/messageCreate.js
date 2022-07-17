@@ -1,5 +1,19 @@
 module.exports = async (client, message) => {
   if (!message.author.bot) {
+    if (!client.config.staff_roles_ids.map(staff_role_id => message.member.roles.cache.has(staff_role_id)).includes(true)) {
+    	if (client.anti_spam[message.member.id]) {
+        if (client.anti_spam[message.member.id] === 4) {
+          message.channel.send(`${message.member.toString()}, vous parlez trop vite, vous risquez de vous faire bannir.`);
+        } else if (client.anti_spam[message.member.id] === 6) {
+          message.member.ban({ deleteMessageDays: 1 }).catch(() => null);
+        }
+        client.anti_spam[message.member.id] += 1;
+    	} else {
+        client.anti_spam[message.member.id] = 1;
+      }
+    }
+    setTimeout(() => client.anti_spam[message.member.id] === 1 ? delete client.anti_spam[message.member.id] : client.anti_spam[message.member.id] -= 1, 5000)
+
     const missions_channel = client.config.missions_channels.find(mission_channel => mission_channel.channel_id === message.channel.id);
     
     if (missions_channel) {

@@ -1,19 +1,18 @@
 module.exports = {
   async run({ client, interaction }) {
-    const { guild } = interaction;
-    const { user } = interaction;
-    const ticket_category = guild.channels.cache.get(client.config.ticket_category_id);
+    const { guild, user } = interaction;
+    const ticket_category = guild.channels.cache.get(client.config.ticket_category_id) || await guild.channels.fetch(client.config.ticket_category_id).catch(() => null);
     const category_channels_size = guild.channels.cache.filter(c => c.name.startsWith(`ticket-${user.discriminator}`)).size;
 
     const ticket = await ticket_category.createChannel(`ticket-${user.discriminator}-${category_channels_size + 1}`, {
       permissionOverwrites: [
         {
           id: guild.id,
-          deny: ['VIEW_CHANNEL']
+          deny: ["VIEW_CHANNEL"]
         },
         {
           id: user.id,
-          allow: ['VIEW_CHANNEL', 'SEND_MESSAGES']
+          allow: ["VIEW_CHANNEL", "SEND_MESSAGES"]
         }
       ]
     });
@@ -29,7 +28,7 @@ module.exports = {
       embeds: [
         {
           color: client.config.colors.main,
-          description: 'Le staff vous contactera sous peu.\nPour fermer ce ticket, réagissez avec 🔒',
+          description: "Le staff vous contactera sous peu.\nPour fermer ce ticket, réagissez avec 🔒",
           footer: {
             icon_url: client.user.displayAvatarURL(),
             text: client.config.footer
@@ -43,7 +42,7 @@ module.exports = {
             {
               type: 2,
               label: "Fermer le ticket",
-              emoji: '🔒',
+              emoji: "🔒",
               style: 2,
               custom_id: `close-ticket`
             }

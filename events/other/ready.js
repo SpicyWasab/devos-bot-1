@@ -9,5 +9,6 @@ module.exports = async (client) => {
 
   client.user.setPresence({ status: client.config.presence.type, activities: [{ name: client.config.presence.status }] });
 
+  client.anti_spam = {};
   console.log(`[${client.user.username}]: I'm ready.`);
 };
