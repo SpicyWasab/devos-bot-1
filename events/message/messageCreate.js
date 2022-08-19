@@ -1,25 +1,28 @@
 module.exports = async (client, message) => {
   if (!message.author.bot) {
     if (!client.config.staff_roles_ids.map(staff_role_id => message.member.roles.cache.has(staff_role_id)).includes(true)) {
-    	if (client.anti_spam[message.member.id]) {
+      if (client.anti_spam[message.member.id]) {
         if (client.anti_spam[message.member.id] === 4) {
           message.channel.send(`${message.member.toString()}, vous parlez trop vite, vous risquez de vous faire bannir.`);
         } else if (client.anti_spam[message.member.id] === 6) {
           message.member.ban({ deleteMessageDays: 1 }).catch(() => null);
         }
         client.anti_spam[message.member.id] += 1;
-    	} else {
+      } else {
         client.anti_spam[message.member.id] = 1;
       }
     }
-    setTimeout(() => client.anti_spam[message.member.id] === 1 ? delete client.anti_spam[message.member.id] : client.anti_spam[message.member.id] -= 1, 5000)
+
+    setTimeout(() => {
+      client.anti_spam[message.member.id] === 1 ? delete client.anti_spam[message.member.id] : client.anti_spam[message.member.id] -= 1;
+    }, 5000);
 
     const missions_channel = client.config.missions_channels.find(mission_channel => mission_channel.channel_id === message.channel.id);
-    
+
     if (missions_channel) {
       if (client.config.staff_roles_ids.map(staff_role_id => message.member.roles.cache.has(staff_role_id)).includes(true)) return;
 
-      function message_form_is_valide (text) {
+      const message_form_is_valide = function(text) {
         let apparition = 0;
         const keywords = ["description", "date", "langage", "language", "niveau", "rémunération", "remuneration", "prix", "tarif", "tarifs", "commentaire"];
 
@@ -52,7 +55,7 @@ module.exports = async (client, message) => {
               color: client.config.colors.red,
               title: "Mise en forme non conforme",
               description: `**Message :**\n\`\`\`${message.content}\`\`\``,
-              fields:[
+              fields: [
                 {
                   name: "👤 Membre",
                   value: message.member.toString(),
@@ -64,22 +67,22 @@ module.exports = async (client, message) => {
                   inline: true
                 },
                 {
-                  name: "📆 Date", 
-                  value: `<t:${Math.floor((message.createdAt) / 1000)}>`,
+                  name: "📆 Date",
+                  value: `<t:${Math.floor(message.createdAt / 1000)}>`,
                   inline: true
                 }
               ]
             }
           ]
-        });        
+        });
       }
     }
 
-    if (client.config.suggestion_channel === message.channel.id){
+    if (client.config.suggestion_channel === message.channel.id) {
       message.delete();
-  
+
       const suggestion = await message.channel.send({
-        embeds : [{
+        embeds: [{
           color: client.config.colors.main,
           description: `**Suggestion:** ${message.content}\nPar : ${message.author}\nLégendes : Bonne idée :white_check_mark:, Mauvaise idée :x: `,
           footer: {
@@ -88,7 +91,7 @@ module.exports = async (client, message) => {
           }
         }]
       });
-  
+
       suggestion.react("✅");
       suggestion.react("❌");
     }
@@ -120,13 +123,13 @@ module.exports = async (client, message) => {
     }
   }
 
-  if (message.author.id == client.config.disboard_id) {
+  if (message.author.id === client.config.disboard_id) {
     if (message.interaction && message.interaction.type === "APPLICATION_COMMAND" && message.interaction.commandName === "bump") {
       const member = message.guild.members.cache.get(message.interaction.user.id);
 
       if (!member) return;
 
-      const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id} LIMIT 1`); 
+      const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id} LIMIT 1`);
 
       const credits_number = member.roles.cache.has(client.config.booster_role) ? 1 : 0.5;
 

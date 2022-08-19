@@ -1,3 +1,5 @@
+const { PermissionFlagsBits } = require("discord.js");
+
 module.exports = {
   async run({ client, interaction }) {
     const { guild, user } = interaction;
@@ -8,11 +10,11 @@ module.exports = {
       permissionOverwrites: [
         {
           id: guild.id,
-          deny: ["VIEW_CHANNEL"]
+          deny: [PermissionFlagsBits.ViewChannel]
         },
         {
           id: user.id,
-          allow: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+          allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages]
         }
       ]
     });
@@ -20,7 +22,7 @@ module.exports = {
     for (const staff_role_id of client.config.staff_roles_ids) {
       const staff_role = guild.roles.cache.find(r => r.id === staff_role_id);
 
-      if (staff_role) ticket.permissionOverwrites.edit(staff_role, { VIEW_CHANNEL: true, SEND_MESSAGES: true });
+      if (staff_role) ticket.permissionOverwrites.edit(staff_role, { ViewChannel: true, SendMessages: true });
     }
 
     const ticket_message = await ticket.send({

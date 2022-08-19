@@ -1,7 +1,9 @@
+const { ApplicationCommandType, PermissionFlagsBits } = require("discord.js");
+
 module.exports = {
   description: "Crée le panel de ticket.",
-  type: "CHAT_INPUT",
-  permissions: ["ADMINISTRATOR"],
+  type: ApplicationCommandType.ChatInput,
+  permissions: [PermissionFlagsBits.Administrator],
   async run({ client, interaction }) {
     const ticket_channel = interaction.guild.channels.cache.get(client.config.ticket_channel_id) || await interaction.guild.channels.fetch(client.config.ticket_channel_id).catch(() => null);
 

@@ -1,16 +1,18 @@
+const { ApplicationCommandOptionType, ApplicationCommandType } = require("discord.js");
+
 module.exports = {
   description: "Affiche différents classements.",
-  type: "CHAT_INPUT",
+  type: ApplicationCommandType.ChatInput,
   options: [
     {
       name: "level",
       description: "Affiche le classement des niveaux.",
-      type: "SUB_COMMAND"
+      type: ApplicationCommandOptionType.Subcommand
     },
     {
       name: "credits",
       description: "Affiche le classement des credits.",
-      type: "SUB_COMMAND"
+      type: ApplicationCommandOptionType.Subcommand
     }
   ],
   async run({ client, interaction }) {

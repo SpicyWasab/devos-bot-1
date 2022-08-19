@@ -1,16 +1,18 @@
+const { ApplicationCommandOptionType, ApplicationCommandType } = require("discord.js");
+
 module.exports = {
-  description: 'Comment bien poser une question.',
-  type: 'CHAT_INPUT',
+  description: "Comment bien poser une question.",
+  type: ApplicationCommandType.ChatInput,
   options: [
     {
-      name: 'pour',
-      description: 'Membre qui ne sait pas poser son problème.',
-      type: 'USER',
+      name: "pour",
+      description: "Membre qui ne sait pas poser son problème.",
+      type: ApplicationCommandOptionType.User,
       required: true
     }
   ],
   async run({ client, interaction }) {
-    const member = interaction.options.getMember('pour');
+    const member = interaction.options.getMember("pour");
 
     interaction.reply({
       content: member.toString(),
@@ -20,8 +22,8 @@ module.exports = {
           name: member.user.tag,
           icon_url: member.user.displayAvatarURL()
         },
-        title: 'Voici comment bien poser son problème.',
-        description: '1) Expliquez le contexte de votre problème.\n2) Montrez le code ou la partie qui bloque.\n3) Expliquez ce qu\'il devrait ce passer dans le cas normal.\n4) Montrez votre code.\n\nGoogle est un outil très puissant, n\'hésitez pas a l\'utiliser.',
+        title: "Voici comment bien poser son problème.",
+        description: "1) Expliquez le contexte de votre problème.\n2) Montrez le code ou la partie qui bloque.\n3) Expliquez ce qu'il devrait ce passer dans le cas normal.\n4) Montrez votre code.\n\nGoogle est un outil très puissant, n'hésitez pas a l'utiliser.",
         footer: {
           icon_url: client.user.displayAvatarURL(),
           text: client.config.footer

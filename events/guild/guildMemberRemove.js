@@ -13,7 +13,7 @@ module.exports = async (client, member) => {
   const members = guild.members.cache.filter(m => m.user.bot === false).size;
   const bots = all_members - members;
 
-  all_members_channel.setName(`🌍 Global: ${all_members}`, 'Stats counter.');
-  members_channel.setName(`🧑 Membres: ${members}`, 'Stats counter.');
-  bots_channel.setName(`🤖 Bots: ${bots}`, 'Stats counter.');
+  all_members_channel.setName(`🌍 Global: ${all_members}`, "Stats counter.");
+  members_channel.setName(`🧑 Membres: ${members}`, "Stats counter.");
+  bots_channel.setName(`🤖 Bots: ${bots}`, "Stats counter.");
 };

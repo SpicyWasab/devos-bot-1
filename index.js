@@ -1,7 +1,7 @@
-const Client = require('./base/Client');
-const config = require('./config.test.json');
-require('./base/Prototypes');
-require('dotenv/config');
+const Client = require("./base/Client");
+const config = require("./config.test.json");
+require("./base/Prototypes");
+require("dotenv/config");
 
 const client = new Client({ config });
 

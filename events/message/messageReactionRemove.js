@@ -10,4 +10,4 @@ module.exports = async (client, messageReaction, user) => {
   const member = await messageReaction.message.guild.members.fetch(user.id);
 
   member.roles.remove(emoji.role_id);
-}
+};

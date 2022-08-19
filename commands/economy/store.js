@@ -1,7 +1,9 @@
+const { ApplicationCommandType } = require("discord.js");
+
 module.exports = {
-  description: 'Affiche le magasin pour vous achetez des produits.',
-  type: 'CHAT_INPUT',
-  aliases: ['shop'],
+  description: "Affiche le magasin pour vous achetez des produits.",
+  type: ApplicationCommandType.ChatInput,
+  aliases: ["shop"],
   async run({ client, interaction }) {
     const embed = {
       color: client.config.colors.main,
@@ -9,7 +11,7 @@ module.exports = {
         name: interaction.user.tag,
         icon_url: interaction.user.displayAvatarURL()
       },
-      title: 'Magasin',
+      title: "Magasin",
       description: `Achetez vous des produits en faisant glisser le menu déroulant.`,
       fields: [],
       footer: {

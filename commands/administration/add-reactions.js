@@ -1,19 +1,21 @@
+const { ApplicationCommandOptionType, ApplicationCommandType, PermissionFlagsBits } = require("discord.js");
+
 module.exports = {
   description: "Ajoute les réactions de rôles au message en question.",
-  type: "CHAT_INPUT",
-  permissions: ["ADMINISTRATOR"],
+  type: ApplicationCommandType.ChatInput,
+  permissions: [PermissionFlagsBits.Administrator],
   options: [
     {
-      name: "message",
-      description: "Choisissez le message.",
-      type: "STRING",
+      name: "category",
+      description: "Choisissez le group.",
+      type: ApplicationCommandOptionType.String,
       required: true
     }
   ],
   async run({ client, interaction }) {
     const category = interaction.options.getString("category");
 
-    const group = client.config.reactions.find(r => r.name.toLowerCase() === category.toLowerCase);
+    const group = client.config.reactions.find(r => r.name.toLowerCase() === category.toLowerCase());
 
     if (!group) return interaction.error("Ce message n'est pas dans la liste des messages à réaction.", { ephemeral: true });
 

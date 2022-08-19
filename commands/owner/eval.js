@@ -1,11 +1,13 @@
+const { ApplicationCommandOptionType, ApplicationCommandType } = require("discord.js");
+
 module.exports = {
   description: "Execute du code javascript.",
-  type: "CHAT_INPUT",
+  type: ApplicationCommandType.ChatInput,
   options: [
     {
       name: "code",
       description: "Code à executer.",
-      type: "STRING",
+      type: ApplicationCommandOptionType.String,
       required: true
     }
   ],

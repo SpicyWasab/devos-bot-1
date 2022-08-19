@@ -1,6 +1,6 @@
 module.exports = {
   async run({ client, interaction }) {
-    if (interaction.user.id !== interaction.customId.split('.')[1]) return interaction.deferUpdate();
+    if (interaction.user.id !== interaction.customId.split(".")[1]) return interaction.deferUpdate();
 
     if (!interaction.values.length) return interaction.error("Vous n'avez pas choisi d'item.");
 
@@ -14,7 +14,7 @@ module.exports = {
 
       if (user_db.credits < item.credits) return interaction.error(`${interaction.user.toString()}, Il vous manque ${item.credits - user_db.credits} credits pour acheter le produit \`${item.name}\`.`);
 
-      if (item.id == 'ad_role') {
+      if (item.id === "ad_role") {
         if (interaction.member.roles.cache.has(client.config.ad_role)) return interaction.error(`${interaction.user.toString()}, Vous avez déjà acheter ce produit.`);
         interaction.member.roles.add(client.config.ad_role);
         await client.pool.query(`UPDATE users SET credits =  ${user_db.credits - item.credits} WHERE id = ${interaction.user.id}`);
@@ -25,7 +25,7 @@ module.exports = {
         });
       }
 
-      if (item.id == 'color_roles') {
+      if (item.id === "color_roles") {
         const color_roles_select = await client.pool.query(`SELECT * FROM color_roles WHERE id = ${interaction.user.id}`);
         const color_roles = color_roles_select.rows;
 
