@@ -1,4 +1,4 @@
-const { ApplicationCommandType } = require("discord.js");
+const { ApplicationCommandType, ComponentType } = require("discord.js");
 
 module.exports = {
   description: "Affiche le magasin pour vous achetez des produits.",
@@ -7,17 +7,11 @@ module.exports = {
   async run({ client, interaction }) {
     const embed = {
       color: client.config.colors.main,
-      author: {
-        name: interaction.user.tag,
-        icon_url: interaction.user.displayAvatarURL()
-      },
+      author: { name: interaction.user.tag, icon_url: interaction.user.displayAvatarURL() },
       title: "Magasin",
       description: `Achetez vous des produits en faisant glisser le menu déroulant.`,
       fields: [],
-      footer: {
-        icon_url: client.user.displayAvatarURL(),
-        text: client.config.footer
-      }
+      footer: { text: client.config.footer, icon_url: client.user.displayAvatarURL() }
     };
 
     const options = [];
@@ -28,19 +22,17 @@ module.exports = {
     }
 
     interaction.reply({
-      components: [
-        {
-          type: 1,
-          components: [
-            {
-              type: 3,
-              custom_id: `store.${interaction.user.id}`,
-              options: [options],
-              placeholder: "Choisissez un ou plusieurs items"
-            }
-          ]
-        }
-      ],
+      components: [{
+        type: ComponentType.ActionRow,
+        components: [
+          {
+            type: ComponentType.SelectMenu,
+            custom_id: `store.${interaction.user.id}`,
+            options,
+            placeholder: "Choisissez un ou plusieurs items"
+          }
+        ]
+      }],
       embeds: [embed]
     });
   }

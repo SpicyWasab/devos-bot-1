@@ -1,4 +1,4 @@
-const { ApplicationCommandType } = require("discord.js");
+const { ApplicationCommandType, ComponentType } = require("discord.js");
 
 module.exports = {
   description: "Changer la couleur de votre pseudo.",
@@ -16,9 +16,7 @@ module.exports = {
         label: client.config.color_roles.find(cr => cr.id === color_role.color).name,
         value: color_role.color,
         description: `Couleur ID : ${color_role.color}`,
-        emoji: {
-          name: client.config.color_roles.find(cr => cr.id === color_role.color).emoji
-        }
+        emoji: { name: client.config.color_roles.find(cr => cr.id === color_role.color).emoji }
       });
     }
 
@@ -26,12 +24,12 @@ module.exports = {
       content: "Choisissez la nouvelle couleur à mettre parmis vos couleurs achetés.",
       components: [
         {
-          type: 1,
+          type: ComponentType.ActionRow,
           components: [
             {
-              type: 3,
+              type: ComponentType.SelectMenu,
               custom_id: `switch-color-roles.${interaction.user.id}`,
-              options: [options],
+              options: options,
               placeholder: "Choisissez une couleur"
             }
           ]

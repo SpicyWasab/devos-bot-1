@@ -1,3 +1,5 @@
+const { ComponentType } = require("discord.js");
+
 module.exports = {
   async run({ client, interaction }) {
     if (interaction.user.id !== interaction.customId.split(".")[1]) return interaction.deferUpdate();
@@ -40,9 +42,7 @@ module.exports = {
             label: color_role_filtered.name,
             value: color_role_filtered.id,
             description: `Couleur ID : ${color_role_filtered.id}`,
-            emoji: {
-              name: color_role_filtered.emoji
-            }
+            emoji: { name: color_role_filtered.emoji }
           });
         }
 
@@ -51,12 +51,12 @@ module.exports = {
           embeds: [],
           components: [
             {
-              type: 1,
+              type: ComponentType.ActionRow,
               components: [
                 {
-                  type: 3,
+                  type: ComponentType.SelectMenu,
                   custom_id: `color-roles.${interaction.user.id}.${item.name}.${item.credits}`,
-                  options: [options],
+                  options: options,
                   placeholder: "Choisissez une couleur"
                 }
               ]
