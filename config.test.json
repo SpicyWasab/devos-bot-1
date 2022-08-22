@@ -1,5 +1,7 @@
 {
-  "ad_role": "",
+  "ad_role": "947985140003528705",
+  "change_nickname_role": "1010701085524107425",
+  "rich_role_id": "1011240071623618651",
   "autorole_roles": [],
   "ban_event_roles": ["946876887618183198", "946876910980435980"],
   "booster_role": "",
@@ -92,7 +94,7 @@
     }
   ],
   "roles_channel_id": "946838404199505983",
-  "staff_roles_ids" : ["946876887618183198"],
+  "staff_roles_id" : ["946876887618183198"],
   "stats": {
     "all": "958740328528089148",
     "members": "958740354855751680",
@@ -110,6 +112,12 @@
       "name": "Rôles de couleur",
       "id": "color_roles",
       "description": "Permet de changer votre couleur qui apparait sur le serveur."
+    },
+    {
+      "credits": 10,
+      "name": "Changement de pseudo",
+      "id": "change_nickname_role",
+      "description": "Permet d'avoir la permission de changer votre pseudo sur le serveur."
     }
   ],
   "suggestion_channel" : "815539492752588851",

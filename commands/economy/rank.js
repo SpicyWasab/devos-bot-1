@@ -20,12 +20,12 @@ module.exports = {
 
     await interaction.deferReply();
 
-    const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id}`);
+    const users_db_select = await client.pool.query("SELECT * FROM users WHERE user_id = $1", [member.id]);
     const user_db = users_db_select.rows[0];
 
     if (!user_db) return interaction.error(member.id === interaction.member.id ? "Vous n'avez pas de niveau." : `${member.toString()} n'a pas de niveau.`);
 
-    const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM users) SELECT * from ranking WHERE id = ${member.id};`);
+    const ranks_select = await client.pool.query("WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM users) SELECT * from ranking WHERE user_id = 1;", [member.id]);
     const rank = parseInt(ranks_select.rows[0].position);
 
     const old_xp_objectif = (user_db.level === 1 ? 1 : user_db.level - 1) ** 2 * 100;

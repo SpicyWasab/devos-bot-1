@@ -7,11 +7,11 @@ module.exports = {
 
     if (!color_role) interaction.error(`Je ne trouve pas le rôle de couleur ${color}.`);
 
-    const color_roles_select = await client.pool.query(`SELECT * FROM color_roles WHERE id = ${interaction.user.id}`);
+    const color_roles_select = await client.pool.query("SELECT * FROM color_roles WHERE user_id = $1", [interaction.user.id]);
 
     if (color_roles_select.rows.find(r => r.color === color)) return interaction.error("Vous avez déjà acheté ce rôle de couleur.");
 
-    const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${interaction.user.id}`);
+    const users_db_select = await client.pool.query("SELECT * FROM users WHERE user_id = $1", [interaction.user.id]);
     const user_db = users_db_select.rows[0];
 
     const item = {
@@ -26,7 +26,7 @@ module.exports = {
     const member = await interaction.guild.members.fetch(interaction.user.id);
     member.roles.add(color_role.role_id);
 
-    await client.pool.query(`UPDATE users SET credits = ${user_db.credits - item.credits} WHERE id = ${interaction.user.id}`);
+    await client.pool.query("UPDATE users SET credits = $1 WHERE user_id = $2;", [user_db.credits - item.credits, interaction.user.id]);
     interaction.update({
       content: `${interaction.user.toString()}, Vous avez correctement acheté le rôle \`${client.config.color_roles.find(cr => cr.id === color).name}\`. Je vous ai débité ${item.credits} credits.`,
       components: []

@@ -57,7 +57,7 @@ module.exports = {
 
       if (command.aliases) embed.fields.push({ name: "Aliases", value: command.aliases.map(alias => `\`${alias}\``).join(", ") });
       if (command.options) embed.fields.push({ name: "Options", value: command.options.map(option => `\`${option.name}\`: ${option.description}`).join("\n") });
-      if (command.permissions) embed.fields.push({ name: "Permissions", value: new PermissionsBitField(command.permissions).toArray().map(permission => `\`${client.config.permissions[permission]}\``).join(", ") });
+      if (command.defaultMemberPermissions) embed.fields.push({ name: "Permissions", value: new PermissionsBitField(command.defaultMemberPermissions).toArray().map(permission => `\`${client.config.permissions[permission]}\``).join(", ") });
 
       interaction.reply({ embeds: [embed] });
     }

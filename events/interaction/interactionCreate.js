@@ -5,7 +5,7 @@ module.exports = (client, interaction) => {
     if (!command) return interaction.error("Cette commande n'existe pas ou n'existe plus.");
 
     if (interaction.user.id !== client.config.owner_id && command.category === "owner") return;
-    if (command.permissions && !interaction.member.permissions.has(command.permissions)) return interaction.error("Vous n'avez pas la permission de faire cette commande.");
+    if (command.defaultMemberPermissions && !interaction.member.permissions.has(command.defaultMemberPermissions)) return interaction.error("Vous n'avez pas la permission de faire cette commande.");
 
     command.run({ client, interaction });
     console.log(`${interaction.user.tag} à fait la commande ${interaction.commandName}`);

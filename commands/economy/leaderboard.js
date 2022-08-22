@@ -21,7 +21,7 @@ module.exports = {
     if (leadeboard_type === "level") {
       const users_db_select = await client.pool.query("SELECT * FROM users ORDER BY experience DESC LIMIT 10");
 
-      const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = ${interaction.member.id};`);
+      const ranks_select = await client.pool.query("WITH ranking AS (SELECT id, experience, DENSE_RANK() OVER (ORDER BY experience DESC) AS position FROM public.users) SELECT * from ranking WHERE id = $1;", [interaction.member.id]);
       if (!ranks_select.rowCount) return interaction.error("Personne n'a encore de niveau sur le serveur.");
       const rank = ranks_select.rows[0];
 
@@ -39,13 +39,13 @@ module.exports = {
         }
       };
 
-      await users_db_select.rows.forEach(async (userDB, i) => {
-        const member = await interaction.guild.members.fetch(userDB.id);
-        if (member) embed.description += `${i + 1}. ${member.toString()}\nNiveau : ${userDB.level}, Experience : ${userDB.experience}\n`;
+      await users_db_select.rows.forEach(async (user_db, i) => {
+        const member = await interaction.guild.members.fetch(user_db.id);
+        if (member) embed.description += `${i + 1}. ${member.toString()}\nNiveau : ${user_db.level}, Experience : ${user_db.experience}\n`;
       });
 
       if (rank.position > users_db_select.rowCount) {
-        const user_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${interaction.member.id}`);
+        const user_db_select = await client.pool.query("SELECT * FROM users WHERE user_id = $1", [interaction.member.id]);
         const user_db = user_db_select.rows[0];
         embed.description += `\n↪ ${rank.position}. ${interaction.member.toString()}\nNiveau : ${user_db.level}, Experience : ${user_db.experience}`;
       }
@@ -54,7 +54,7 @@ module.exports = {
     } else if (leadeboard_type === "credits") {
       const users_db_select = await client.pool.query("SELECT * FROM users ORDER BY credits DESC LIMIT 10");
 
-      const ranks_select = await client.pool.query(`WITH ranking AS (SELECT id, credits, DENSE_RANK() OVER (ORDER BY credits DESC) AS position FROM users) SELECT * from ranking WHERE id = ${interaction.member.id};`);
+      const ranks_select = await client.pool.query("WITH ranking AS (SELECT id, credits, DENSE_RANK() OVER (ORDER BY credits DESC) AS position FROM users) SELECT * from ranking WHERE id = $1;", [interaction.member.id]);
       if (!ranks_select.rowCount) return interaction.error("Personne n'a encore de credits sur le serveur.");
       const rank = ranks_select.rows[0];
 
@@ -72,7 +72,7 @@ module.exports = {
       });
 
       if (rank.position > users_db_select.rowCount) {
-        const user_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${interaction.member.id}`);
+        const user_db_select = await client.pool.query("SELECT * FROM users WHERE user_id = $1;", [interaction.member.id]);
         const user_db = user_db_select.rows[0];
         embed.description += `\n↪ ${rank.position}. ${interaction.member.toString()}\nCredits : ${user_db.credits}`;
       }

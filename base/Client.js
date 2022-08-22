@@ -1,4 +1,4 @@
-const { ApplicationCommandType, Client, GatewayIntentBits, Partials } = require("discord.js");
+const { ApplicationCommandType, Client, GatewayIntentBits, IntentsBitField, Partials } = require("discord.js");
 const { lstatSync, readdirSync } = require("fs");
 const path = require("path");
 const pool = require(path.resolve("./database/connection"));
@@ -8,7 +8,7 @@ class CustomClient extends Client {
     super({
       allowedMentions: { parse: ["users"], repliedUser: true },
       partials: [Partials.Message, Partials.Channel, Partials.GuildMember, Partials.Reaction, Partials.GuildVoiceStates],
-      intents: 4751
+      intents: new IntentsBitField().add([GatewayIntentBits.DirectMessageReactions, GatewayIntentBits.DirectMessages, GatewayIntentBits.Guilds, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildEmojisAndStickers, GatewayIntentBits.GuildIntegrations, GatewayIntentBits.GuildInvites, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildPresences])
     });
 
     this.pool = pool;
@@ -18,6 +18,8 @@ class CustomClient extends Client {
     this.selectmenus = {};
     this.slashs = [];
     this.anti_spam = {};
+    this.anti_everyone = {};
+    this.add_bot = false;
     this.config = options.config;
   }
 
@@ -38,8 +40,7 @@ class CustomClient extends Client {
             name: commandName,
             description: command.description,
             options: command.options,
-            permissions: command.permissions || [],
-            defaultPermssion: command.permissions?.length !== null,
+            defaultMemberPermissions: command.permissions || [],
             type: command.type
           });
         } else {
@@ -55,8 +56,7 @@ class CustomClient extends Client {
                 name: alias,
                 description: command.description,
                 options: command.options,
-                permissions: command.permissions || [],
-                defaultPermssion: command.permissions?.length !== null,
+                defaultMemberPermissions: command.permissions || [],
                 type: command.type
               });
             } else {

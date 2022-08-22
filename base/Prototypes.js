@@ -1,4 +1,4 @@
-const { CommandInteraction } = require("discord.js");
+const { BaseInteraction } = require("discord.js");
 
 String.prototype.hexToInt = function() {
   return parseInt(this.replace("#", ""), 16);
@@ -8,7 +8,7 @@ Number.prototype.toHex = function() {
   return `#${this.toString(16)}`;
 };
 
-CommandInteraction.prototype.success = async function(args, { replied = true, ephemeral = false } = {}) {
+BaseInteraction.prototype.success = async function(args, { replied = true, ephemeral = false } = {}) {
   const message = {
     embeds: [{
       color: this.client.config.colors.green,
@@ -25,7 +25,7 @@ CommandInteraction.prototype.success = async function(args, { replied = true, ep
   replied === true ? this.reply(message) : this.channel.send(message);
 };
 
-CommandInteraction.prototype.error = async function(args, { replied = true, ephemeral = true } = {}) {
+BaseInteraction.prototype.error = async function(args, { replied = true, ephemeral = true } = {}) {
   const message = {
     embeds: [{
       color: this.client.config.colors.red,

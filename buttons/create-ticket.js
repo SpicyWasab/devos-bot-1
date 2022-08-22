@@ -19,7 +19,7 @@ module.exports = {
       ]
     });
 
-    for (const staff_role_id of client.config.staff_roles_ids) {
+    for (const staff_role_id of client.config.staff_roles_id) {
       const staff_role = guild.roles.cache.find(r => r.id === staff_role_id);
 
       if (staff_role) ticket.permissionOverwrites.edit(staff_role, { ViewChannel: true, SendMessages: true });

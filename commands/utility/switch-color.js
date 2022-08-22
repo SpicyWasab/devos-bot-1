@@ -4,7 +4,7 @@ module.exports = {
   description: "Changer la couleur de votre pseudo.",
   type: ApplicationCommandType.ChatInput,
   async run({ client, interaction }) {
-    const color_roles_select = await client.pool.query(`SELECT * FROM color_roles WHERE id = ${interaction.user.id}`);
+    const color_roles_select = await client.pool.query("SELECT * FROM color_roles WHERE user_id = $1;", [interaction.user.id]);
     const color_roles = color_roles_select.rows;
 
     if (!color_roles.length) return interaction.error(`${interaction.user.toString()}, Vous n'avez acheté aucun rôle de couleur.`);

@@ -1,26 +1,52 @@
 module.exports = async (client, message) => {
+  if (!message.member || !message.guild) return;
   if (!message.author.bot) {
-    if (!client.config.staff_roles_ids.map(staff_role_id => message.member.roles.cache.has(staff_role_id)).includes(true)) {
-      if (client.anti_spam[message.member.id]) {
-        if (client.anti_spam[message.member.id] === 4) {
-          message.channel.send(`${message.member.toString()}, vous parlez trop vite, vous risquez de vous faire bannir.`);
-        } else if (client.anti_spam[message.member.id] === 6) {
-          message.member.ban({ deleteMessageDays: 1 }).catch(() => null);
-        }
-        client.anti_spam[message.member.id] += 1;
+    if (!client.config.staff_roles_id.some(staff_role_id => message.member.roles.cache.has(staff_role_id))) {
+      let message_count = client.anti_spam[message.member.id];
+      if (message_count) {
+        message_count += 1;
+        client.anti_spam[message.member.id] = message_count;
+        if (message_count === 4) message.channel.send(`${message.member.toString()}, vous parlez trop vite, vous risquez de vous faire bannir.`);
+        if (message_count === 6 && message.member.bannable) message.member.ban({ deleteMessageDays: 1, reason: "Anti-Spam" }).catch(() => null);
       } else {
         client.anti_spam[message.member.id] = 1;
+        setTimeout(() => delete client.anti_spam[message.member.id], 10000);
+      }
+
+      const invite_links = ["discord.gg", "discord.com/invite"];
+
+      for (const invite_link of invite_links) {
+        if (message.content.includes(invite_link)) {
+          const code = message.content.split(invite_link)[1].split(" ")[0];
+
+          console.log(code);
+          const is_guild_invite = message.guild.invites.cache.has(code);
+
+          if (!is_guild_invite) {
+            const vanity = await message.guild.fetchVanityData();
+            if (code !== vanity?.code && message.deletable) message.delete().catch(() => null);
+          }
+        }
       }
     }
 
-    setTimeout(() => {
-      client.anti_spam[message.member.id] === 1 ? delete client.anti_spam[message.member.id] : client.anti_spam[message.member.id] -= 1;
-    }, 5000);
+    if (message.mentions.everyone) {
+      let everyone_count = client.anti_everyone[message.member.id];
+      if (everyone_count) {
+        everyone_count += 1;
+        client.anti_everyone[message.member.id] = everyone_count;
+        if (everyone_count === 3 && message.deletable) message.delete().catch(() => null);
+        if (everyone_count === 5 && message.member.bannable) message.member.ban({ deleteMessageDays: 1, reason: "Anti-Everyone" }).catch(() => null);
+      } else {
+        client.anti_everyone[message.member.id] = 1;
+        setTimeout(() => delete client.anti_everyone[message.member.id], 15000);
+      }
+    }
 
     const missions_channel = client.config.missions_channels.find(mission_channel => mission_channel.channel_id === message.channel.id);
 
     if (missions_channel) {
-      if (client.config.staff_roles_ids.map(staff_role_id => message.member.roles.cache.has(staff_role_id)).includes(true)) return;
+      if (client.config.staff_roles_id.some(staff_role_id => message.member.roles.cache.has(staff_role_id))) return;
 
       const message_form_is_valide = function(text) {
         let apparition = 0;
@@ -62,7 +88,7 @@ module.exports = async (client, message) => {
                   inline: true
                 },
                 {
-                  name: "💬 Channel",
+                  name: "💬 Salon",
                   value: message.channel.toString(),
                   inline: true
                 },
@@ -96,11 +122,11 @@ module.exports = async (client, message) => {
       suggestion.react("❌");
     }
 
-    const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${message.author.id} LIMIT 1`);
+    const users_db_select = await client.pool.query("SELECT * FROM users WHERE user_id = $1", [message.author.id]);
     let user_db = users_db_select.rows[0];
 
     if (!users_db_select.rowCount) {
-      await client.pool.query(`INSERT INTO users(id, credits, experience, level) VALUES (${message.author.id}, 0, 0, 1)`);
+      await client.pool.query("INSERT INTO users(id, credits, experience, level) VALUES ($1, 0, 0, 1)", [message.author.id]);
       user_db = {
         id: message.member.id,
         credits: 0,
@@ -113,13 +139,19 @@ module.exports = async (client, message) => {
 
     user_db.experience += Math.floor(Math.random() * 7) + 5;
 
-    await client.pool.query(`UPDATE users SET experience = ${user_db.experience} WHERE id = ${message.member.id}`);
+    await client.pool.query("UPDATE users SET experience = $1 WHERE user_id = $2", [user_db.experience, message.member.id]);
 
-    const credits_number = message.member.roles.cache.has(client.config.booster_role) ? 3 : 2;
+    const credits_number = message.member.roles.cache.has(client.config.booster_role) ? 4 : 3;
 
     if (user_db.experience > xp_objectif) {
-      await client.pool.query(`UPDATE users SET credits = ${user_db.credits + credits_number}, level = ${user_db.level + 1} WHERE id = ${message.member.id}`);
+      await client.pool.query("UPDATE users SET credits = $1, level = $2 WHERE user_id = $3", [user_db.credits + credits_number, user_db.level + 1, message.member.id]);
       message.channel.send(`Bravo ${message.member.toString()} ! Vous venez de passer au niveau **${user_db.level + 1}**. Vous gagnez \`${credits_number}\` credits en récompense.`);
+    }
+
+    if (user_db.credits >= 100 && !message.member.roles.cache.has(client.config.rich_role_id)) {
+      message.member.roles.add(client.config.rich_role_id);
+    } else if (user_db.credits < 100 && message.member.roles.cache.has(client.config.rich_role_id)) {
+      message.member.roles.remove(client.config.rich_role_id);
     }
   }
 
@@ -129,13 +161,13 @@ module.exports = async (client, message) => {
 
       if (!member) return;
 
-      const users_db_select = await client.pool.query(`SELECT * FROM users WHERE id = ${member.id} LIMIT 1`);
+      const users_db_select = await client.pool.query("SELECT * FROM users WHERE user_id = $1;", [member.id]);
 
       const credits_number = member.roles.cache.has(client.config.booster_role) ? 1 : 0.5;
 
       if (users_db_select.rowCount) {
         const user_db = users_db_select.rows[0];
-        await client.pool.query(`UPDATE users SET credits = ${user_db.credits + credits_number} WHERE id = ${member.id}`);
+        await client.pool.query("UPDATE users SET credits = $1 WHERE user_id = $2;", [user_db.credits + credits_number, member.id]);
       } else {
         await client.pool.query(`INSERT INTO users(id, credits, experience, level) VALUES (${message.author.id}, ${credits_number}, 0, 1)`);
       }
